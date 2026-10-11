@@ -1,5 +1,5 @@
 // Simon des Monstres: offline cache. The version changes with every build, which refreshes the cache.
-const VERSION = 'simon-39fe2d8bbe';
+const VERSION = 'simon-47bc17e696';
 const FILES = [
  "./",
  "assets/bg-land.webp",

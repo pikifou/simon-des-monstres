@@ -99,6 +99,9 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .home-inner { width: 100%; max-width: 980px; margin: 0 auto; box-sizing: border-box; padding-inline: 16px; padding-block: 64px 24px;
   display: flex; flex-direction: column; justify-content: center; gap: clamp(12px, 2.4vh, 30px); min-height: 100%; }
 .home-top { position: absolute; top: 14px; right: 16px; display: flex; gap: 10px; z-index: 2; }
+.home-lang { position: absolute; top: 14px; left: 16px; z-index: 2; }
+.home-lang .opts { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.home-lang button { min-width: 52px; font-family: var(--font-display); font-weight: 800; letter-spacing: .04em; }
 .title { text-align: center; margin: 0; line-height: .9; }
 .title .simon { display: block; font-family: var(--font-display); font-weight: 900; font-size: clamp(64px, min(15vw, 13.5vh), 150px); letter-spacing: .02em;
   text-shadow: 0 6px 0 rgba(10,6,30,.55), 0 0 40px rgba(126,240,255,.25); }
@@ -166,6 +169,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .pcard input { width: 100%; box-sizing: border-box; border-radius: 18px; border: 2px solid rgba(255,255,255,.22); background: rgba(8,5,26,.6);
   color: var(--ink); font-family: var(--font-display); font-weight: 800; font-size: 26px; text-align: center; padding: 10px 12px; }
 .pcard input:focus { outline: none; border-color: var(--glow); }
+.pcard input::placeholder { color: rgba(255, 248, 236, .5); }
 .starter { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-size: 19px; text-align: center; }
 .starter b { font-family: var(--font-display); font-weight: 800; color: var(--moon); }
 .setup-go { display: flex; justify-content: center; }
@@ -287,13 +291,16 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   <div class="veil"></div>
 
   <!-- ================= HOME ================= -->
-  <section class="screen" id="home" aria-label="Accueil">
+  <section class="screen" id="home" aria-label="Accueil" data-i18n-aria="homeAria">
     <div class="home-inner">
+      <div class="seg home-lang"><span class="opts" role="group" aria-label="Langue / Language">
+        <button id="langFr" lang="fr" aria-pressed="true">FR</button><button id="langEn" lang="en" aria-pressed="false">EN</button>
+      </span></div>
       <div class="home-top">
         <button class="btn btn-ghost install" id="btnInstall" hidden>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 19h14"/></svg>Installer l'appli
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 19h14"/></svg><span data-i18n="install">Installer l'appli</span>
         </button>
-        <button class="iconbtn" id="btnFull" aria-label="Plein écran" hidden>
+        <button class="iconbtn" id="btnFull" aria-label="Plein écran" data-i18n-aria="fullscreen" hidden>
           <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
         </button>
         <button class="iconbtn" id="btnSoundHome" aria-label="Son" aria-pressed="true">
@@ -303,41 +310,41 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
       <h1 class="title">
         <span class="simon" aria-label="Simon"><span>S</span><span>I</span><span>M</span><span>O</span><span>N</span></span>
-        <span class="des">des Monstres</span>
+        <span class="des" data-i18n="subtitle">des Monstres</span>
       </h1>
-      <p class="tagline">Les monstres chantent une petite chanson. Retiens-la et rejoue-la, une couleur de plus à chaque tour !</p>
+      <p class="tagline" data-i18n="tagline">Les monstres chantent une petite chanson. Retiens-la et rejoue-la, une couleur de plus à chaque tour !</p>
 
       <div>
         <div class="choir" id="choir"></div>
-        <p class="choir-hint">Touche un monstre pour l'entendre chanter</p>
+        <p class="choir-hint" data-i18n="choirHint">Touche un monstre pour l'entendre chanter</p>
       </div>
 
       <div class="modes">
         <button class="mode solo" id="btnSolo">
           <img class="ic" src="assets/i-star.webp" alt="">
-          <span class="mt">Tout seul</span>
-          <span class="ms">Jusqu'où iras-tu ?</span>
+          <span class="mt" data-i18n="solo">Tout seul</span>
+          <span class="ms" data-i18n="soloSub">Jusqu'où iras-tu ?</span>
           <span class="badge" id="badgeSolo">Pas encore de record</span>
         </button>
         <button class="mode duo" id="btnDuo">
           <img class="ic" src="assets/i-trophy.webp" alt="">
-          <span class="mt">À deux</span>
-          <span class="ms">Chacun son tour. Le premier qui se trompe a perdu !</span>
+          <span class="mt" data-i18n="duo">À deux</span>
+          <span class="ms" data-i18n="duoSub">Chacun son tour. Le premier qui se trompe a perdu !</span>
           <span class="badge" id="badgeDuo"></span>
         </button>
       </div>
 
       <div class="prefs">
-        <div class="seg"><span class="lbl">Vitesse</span>
-          <span class="opts" role="group" aria-label="Vitesse">
-            <button id="spdSlow" aria-pressed="false">Doucement</button>
-            <button id="spdNormal" aria-pressed="true">Normal</button>
+        <div class="seg"><span class="lbl" data-i18n="speed">Vitesse</span>
+          <span class="opts" role="group" aria-label="Vitesse" data-i18n-aria="speed">
+            <button id="spdSlow" aria-pressed="false" data-i18n="slow">Doucement</button>
+            <button id="spdNormal" aria-pressed="true" data-i18n="normal">Normal</button>
           </span>
         </div>
-        <div class="seg"><span class="lbl">Voix</span>
-          <span class="opts" role="group" aria-label="Voix">
-            <button id="voiceOn" aria-pressed="true">Oui</button>
-            <button id="voiceOff" aria-pressed="false">Non</button>
+        <div class="seg"><span class="lbl" data-i18n="voice">Voix</span>
+          <span class="opts" role="group" aria-label="Voix" data-i18n-aria="voice">
+            <button id="voiceOn" aria-pressed="true" data-i18n="voiceYes">Oui</button>
+            <button id="voiceOff" aria-pressed="false" data-i18n="voiceNo">Non</button>
           </span>
         </div>
       </div>
@@ -345,42 +352,42 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   </section>
 
   <!-- ================= SETUP (duo) ================= -->
-  <section class="screen" id="setup" hidden aria-label="Qui joue ?">
+  <section class="screen" id="setup" hidden aria-label="Qui joue ?" data-i18n-aria="whoPlays">
     <div class="wrap">
       <div class="bar">
-        <button class="iconbtn" id="setupBack" aria-label="Retour">
+        <button class="iconbtn" id="setupBack" aria-label="Retour" data-i18n-aria="back">
           <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
         </button>
-        <h2>Qui joue ?</h2>
+        <h2 data-i18n="whoPlays">Qui joue ?</h2>
       </div>
       <div class="players">
         <div class="pcard">
-          <span class="who">Joueur 1</span>
+          <span class="who" id="who0">Joueur 1</span>
           <button class="avatar-btn" id="av0" aria-label="Changer le monstre du joueur 1">
             <img alt="" src="assets/m-yellow.webp">
-            <span class="chg"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg>Changer de monstre</span>
+            <span class="chg"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg><span data-i18n="changeMonster">Changer de monstre</span></span>
           </button>
           <input id="name0" maxlength="12" autocomplete="off" aria-label="Prénom du joueur 1">
         </div>
         <div class="pcard">
-          <span class="who">Joueur 2</span>
+          <span class="who" id="who1">Joueur 2</span>
           <button class="avatar-btn" id="av1" aria-label="Changer le monstre du joueur 2">
             <img alt="" src="assets/m-red.webp">
-            <span class="chg"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg>Changer de monstre</span>
+            <span class="chg"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg><span data-i18n="changeMonster">Changer de monstre</span></span>
           </button>
           <input id="name1" maxlength="12" autocomplete="off" aria-label="Prénom du joueur 2">
         </div>
       </div>
-      <div class="starter"><span><b id="starterName">Joueur 1</b> commence.</span>
-        <button class="btn btn-ghost" id="swapStarter">Changer</button></div>
-      <div class="setup-go"><button class="btn btn-go" id="duoGo">C'est parti !</button></div>
+      <div class="starter"><span><b id="starterName">Joueur 1</b> <span data-i18n="starts">commence.</span></span>
+        <button class="btn btn-ghost" id="swapStarter" data-i18n="swap">Changer</button></div>
+      <div class="setup-go"><button class="btn btn-go" id="duoGo" data-i18n="go">C'est parti !</button></div>
     </div>
   </section>
 
   <!-- ================= GAME ================= -->
-  <section class="screen" id="game" hidden aria-label="Partie">
+  <section class="screen" id="game" hidden aria-label="Partie" data-i18n-aria="gameAria">
     <div class="topbar">
-      <button class="iconbtn" id="btnQuit" aria-label="Arrêter la partie">
+      <button class="iconbtn" id="btnQuit" aria-label="Arrêter la partie" data-i18n-aria="quitAria">
         <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></svg>
       </button>
       <div class="mid" id="chips"></div>
@@ -389,7 +396,7 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       </button>
     </div>
     <div class="stage" id="stage">
-      <div class="disc" id="disc" role="group" aria-label="Les cinq monstres">
+      <div class="disc" id="disc" role="group" aria-label="Les cinq monstres" data-i18n-aria="discAria">
         <svg class="ring" id="ring" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
         <div class="hub" id="hub"><span class="num" id="hubNum">1</span><span class="lbl" id="hubLbl" aria-live="polite">Écoute…</span><span class="dots" id="hubDots"></span></div>
       </div>
@@ -399,7 +406,7 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
           <div class="hero"><img class="m" id="handoffImg" alt=""></div>
           <h3 id="handoffTitle">À toi !</h3>
           <p id="handoffSub">Écoute bien la chanson.</p>
-          <div class="actions"><button class="btn btn-go" id="handoffGo">Je suis prêt !</button></div>
+          <div class="actions"><button class="btn btn-go" id="handoffGo" data-i18n="imReady">Je suis prêt !</button></div>
         </div>
       </div>
 
@@ -411,11 +418,11 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
   <div class="modal" id="quitModal" hidden>
     <div class="card">
-      <h3>On arrête ?</h3>
-      <p>La partie en cours sera perdue.</p>
+      <h3 data-i18n="quitTitle">On arrête ?</h3>
+      <p data-i18n="quitText">La partie en cours sera perdue.</p>
       <div class="actions">
-        <button class="btn btn-go" id="quitNo">Je continue</button>
-        <button class="btn btn-ghost" id="quitYes">Retour au menu</button>
+        <button class="btn btn-go" id="quitNo" data-i18n="quitNo">Je continue</button>
+        <button class="btn btn-ghost" id="quitYes" data-i18n="quitYes">Retour au menu</button>
       </div>
     </div>
   </div>
@@ -546,12 +553,75 @@ Object.values(ICON).forEach(src => { const im = new Image(); im.src = src; prelo
 // ---------------------------------------------------------------- storage (per device, optional)
 const Store = {
   key: 'simon-des-monstres-v1',
-  data: { names: ['Joueur 1', 'Joueur 2'], avatars: [1, 0], speed: 'normal', voice: true, sound: true, best: 0, tally: [0, 0], starter: 0 },
+  data: { names: ['', ''], avatars: [1, 0], speed: 'normal', voice: true, sound: true, best: 0, tally: [0, 0], starter: 0, lang: '' },
   load() { try { const s = localStorage.getItem(this.key); if (s) Object.assign(this.data, JSON.parse(s)); } catch (e) {} },
   save() { try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch (e) {} },
 };
 Store.load();
 const D = Store.data;
+// names left at a default label are stored empty so they follow the language
+D.names = D.names.map(n => /^(Joueur|Player) [12]$/.test(n || '') ? '' : (n || ''));
+if (D.lang !== 'fr' && D.lang !== 'en') D.lang = /^fr/i.test(navigator.language || 'fr') ? 'fr' : 'en';
+
+// ---------------------------------------------------------------- languages
+const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
+const I18N = {
+  fr: {
+    docTitle: 'Simon des Monstres', homeAria: 'Accueil', install: "Installer l'appli", fullscreen: 'Plein écran',
+    soundOff: 'Couper le son', soundOn: 'Remettre le son', subtitle: 'des Monstres',
+    tagline: 'Les monstres chantent une petite chanson. Retiens-la et rejoue-la, une couleur de plus à chaque tour !',
+    choirHint: "Touche un monstre pour l'entendre chanter", notes: ['Do', 'Ré', 'Mi', 'Sol', 'La'],
+    singerAria: (n, note) => `${n}, la note ${note}`, hello: 'Coucou !',
+    solo: 'Tout seul', soloSub: "Jusqu'où iras-tu ?", duo: 'À deux', duoSub: 'Chacun son tour. Le premier qui se trompe a perdu !',
+    bestNone: 'Pas encore de record', bestBadge: (n) => `Record : ${plural(n, 'note')}`,
+    tallyNone: 'Pas encore de partie', tally: (a, x, b, y) => `${a} : ${x} · ${b} : ${y}`,
+    speed: 'Vitesse', slow: 'Doucement', normal: 'Normal', voice: 'Voix', voiceYes: 'Oui', voiceNo: 'Non',
+    whoPlays: 'Qui joue ?', back: 'Retour', player: (n) => `Joueur ${n}`, changeMonster: 'Changer de monstre',
+    changeMonsterAria: (n) => `Changer le monstre du joueur ${n}`, nameAria: (n) => `Prénom du joueur ${n}`,
+    starts: 'commence.', swap: 'Changer', go: "C'est parti !",
+    gameAria: 'Partie', quitAria: 'Arrêter la partie', discAria: 'Les cinq monstres',
+    chipBest: (n) => `Record ${n}`, ready: 'Prêt ?', listen: 'Écoute…', yourTurn: 'À toi !',
+    yourTurnName: (n) => `À toi, ${n} !`, hubTurnOf: (n) => `À ${n}`, turnOf: (n) => `Au tour de ${n} !`,
+    firstListen: 'Écoute bien le premier monstre.', songHas: (n) => `La chanson a ${n} notes. Écoute bien !`,
+    imReady: 'Je suis prêt !', waitListen: 'Attends, écoute !',
+    cheers: ['Bravo !', 'Super !', 'Génial !', 'Trop fort !', 'Oui !'], milestone: (n) => `${n} notes, bravo !`,
+    oops: 'Oups !', itWas: (n) => `C'était ${n} !`, newRecord: 'Nouveau record !', tryAgain: 'Pas grave, on recommence ?',
+    remembered: (n) => `Tu as retenu <span class="score">${n}</span> note${n > 1 ? 's' : ''} d'affilée.`,
+    bestStat: (n) => `Record : ${n}`, sayRecord: (n) => `Nouveau record ! ${n} notes !`, sayOops0: 'Oups ! On recommence ?',
+    sayOops: (n) => `Oups ! ${plural(n, 'note')}, bravo !`, replay: 'Rejouer', menu: 'Menu', rematch: 'Revanche !',
+    wins: (n) => `${n} gagne !`, errFirst: (n) => `${n} a fait une erreur dès la première note.`,
+    errAt: (n, p, l) => `${n} a fait une erreur à la note ${p} sur ${l}.`, sayWin: (n) => `Bravo ${n} !`,
+    quitTitle: 'On arrête ?', quitText: 'La partie en cours sera perdue.', quitNo: 'Je continue', quitYes: 'Retour au menu',
+  },
+  en: {
+    docTitle: 'Simon and the Monsters', homeAria: 'Home', install: 'Install the app', fullscreen: 'Full screen',
+    soundOff: 'Mute', soundOn: 'Sound on', subtitle: 'and the Monsters',
+    tagline: 'The monsters sing a little song. Remember it and play it back, with one more color every turn!',
+    choirHint: 'Tap a monster to hear it sing', notes: ['C', 'D', 'E', 'G', 'A'],
+    singerAria: (n, note) => `${n}, note ${note}`, hello: 'Hello!',
+    solo: 'Just me', soloSub: 'How far can you go?', duo: 'Two players', duoSub: 'Take turns. The first one to make a mistake loses!',
+    bestNone: 'No record yet', bestBadge: (n) => `Best: ${plural(n, 'note')}`,
+    tallyNone: 'No games yet', tally: (a, x, b, y) => `${a}: ${x} · ${b}: ${y}`,
+    speed: 'Speed', slow: 'Slow', normal: 'Normal', voice: 'Voice', voiceYes: 'On', voiceNo: 'Off',
+    whoPlays: "Who's playing?", back: 'Back', player: (n) => `Player ${n}`, changeMonster: 'Change monster',
+    changeMonsterAria: (n) => `Change player ${n}'s monster`, nameAria: (n) => `Player ${n}'s name`,
+    starts: 'goes first.', swap: 'Swap', go: "Let's go!",
+    gameAria: 'Game', quitAria: 'Stop the game', discAria: 'The five monsters',
+    chipBest: (n) => `Best ${n}`, ready: 'Ready?', listen: 'Listen…', yourTurn: 'Your turn!',
+    yourTurnName: (n) => `Your turn, ${n}!`, hubTurnOf: (n) => `${n}'s turn`, turnOf: (n) => `${n}'s turn!`,
+    firstListen: 'Listen to the first monster.', songHas: (n) => `The song has ${n} notes. Listen carefully!`,
+    imReady: "I'm ready!", waitListen: 'Wait, listen!',
+    cheers: ['Well done!', 'Super!', 'Awesome!', 'Amazing!', 'Yes!'], milestone: (n) => `${n} notes, well done!`,
+    oops: 'Oops!', itWas: (n) => `It was ${n}!`, newRecord: 'New record!', tryAgain: 'Never mind, try again?',
+    remembered: (n) => `You remembered <span class="score">${n}</span> note${n > 1 ? 's' : ''} in a row.`,
+    bestStat: (n) => `Best: ${n}`, sayRecord: (n) => `New record! ${n} notes!`, sayOops0: 'Oops! Try again?',
+    sayOops: (n) => `Oops! ${plural(n, 'note')}, well done!`, replay: 'Play again', menu: 'Menu', rematch: 'Rematch!',
+    wins: (n) => `${n} wins!`, errFirst: (n) => `${n} made a mistake on the very first note.`,
+    errAt: (n, p, l) => `${n} made a mistake on note ${p} of ${l}.`, sayWin: (n) => `Well done, ${n}!`,
+    quitTitle: 'Stop playing?', quitText: 'This game will be lost.', quitNo: 'Keep playing', quitYes: 'Back to menu',
+  },
+};
+const t = (k, ...a) => { const v = I18N[D.lang][k] ?? I18N.fr[k]; return typeof v === 'function' ? v(...a) : v; };
 
 // ---------------------------------------------------------------- sound (Web Audio synth)
 const Sound = {
@@ -616,8 +686,9 @@ const Sound = {
 const Voice = {
   pick() {
     try {
-      const vs = speechSynthesis.getVoices().filter(v => /^fr/i.test(v.lang));
-      return vs.find(v => /fr-FR/i.test(v.lang) && /amelie|amélie|audrey|marie|thomas|google/i.test(v.name)) || vs.find(v => /fr-FR/i.test(v.lang)) || vs[0] || null;
+      const en = D.lang === 'en', fam = en ? /^en/i : /^fr/i, main = en ? /en[-_](US|GB)/i : /fr[-_]FR/i;
+      const vs = speechSynthesis.getVoices().filter(v => fam.test(v.lang));
+      return vs.find(v => main.test(v.lang) && /google|samantha|daniel|karen|amelie|amélie|audrey|marie|thomas/i.test(v.name)) || vs.find(v => main.test(v.lang)) || vs[0] || null;
     } catch (e) { return null; }
   },
   say(text) {
@@ -627,7 +698,7 @@ const Voice = {
       try {
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'fr-FR'; const v = this.pick(); if (v) u.voice = v;
+        u.lang = D.lang === 'en' ? 'en-US' : 'fr-FR'; const v = this.pick(); if (v) u.voice = v;
         u.rate = 1.02; u.pitch = 1.15; u.onend = fin; u.onerror = fin;
         speechSynthesis.speak(u);
       } catch (e) { fin(); }
@@ -683,18 +754,40 @@ for (let k = 0; k < 12; k++) {
 
 // ---------------------------------------------------------------- toggles
 function syncToggles() {
-  ['btnSoundHome', 'btnSoundGame'].forEach(id => { $(id).setAttribute('aria-pressed', String(D.sound)); $(id).setAttribute('aria-label', D.sound ? 'Couper le son' : 'Remettre le son'); });
+  ['btnSoundHome', 'btnSoundGame'].forEach(id => { $(id).setAttribute('aria-pressed', String(D.sound)); $(id).setAttribute('aria-label', D.sound ? t('soundOff') : t('soundOn')); });
   $('spdSlow').setAttribute('aria-pressed', String(D.speed === 'slow'));
   $('spdNormal').setAttribute('aria-pressed', String(D.speed !== 'slow'));
   $('voiceOn').setAttribute('aria-pressed', String(!!D.voice));
   $('voiceOff').setAttribute('aria-pressed', String(!D.voice));
+  $('langFr').setAttribute('aria-pressed', String(D.lang === 'fr'));
+  $('langEn').setAttribute('aria-pressed', String(D.lang === 'en'));
 }
 const toggleSound = () => { Sound.ensure(); D.sound = !D.sound; if (!D.sound) try { speechSynthesis.cancel(); } catch (e) {} Store.save(); syncToggles(); };
 $('btnSoundHome').onclick = toggleSound; $('btnSoundGame').onclick = toggleSound;
 $('spdSlow').onclick = () => { D.speed = 'slow'; Store.save(); syncToggles(); };
 $('spdNormal').onclick = () => { D.speed = 'normal'; Store.save(); syncToggles(); };
-$('voiceOn').onclick = () => { D.voice = true; Store.save(); syncToggles(); Sound.ensure(); Voice.say('Coucou !'); };
+$('voiceOn').onclick = () => { D.voice = true; Store.save(); syncToggles(); Sound.ensure(); Voice.say(t('hello')); };
 $('voiceOff').onclick = () => { D.voice = false; Store.save(); syncToggles(); };
+function setLang(l) { if (D.lang === l) return; D.lang = l; Store.save(); applyLang(); Sound.ensure(); Voice.say(t('hello')); }
+$('langFr').onclick = () => setLang('fr');
+$('langEn').onclick = () => setLang('en');
+function applyLang() {
+  document.documentElement.lang = D.lang;
+  document.title = t('docTitle');
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+  [0, 1].forEach(p => {
+    $('who' + p).textContent = t('player', p + 1);
+    $('av' + p).setAttribute('aria-label', t('changeMonsterAria', p + 1));
+    $('name' + p).setAttribute('aria-label', t('nameAria', p + 1));
+    $('name' + p).placeholder = t('player', p + 1);
+  });
+  [...$('choir').children].forEach((b, i) => {
+    b.querySelector('.nt').textContent = t('notes')[i];
+    b.setAttribute('aria-label', t('singerAria', MONSTERS[i].name, t('notes')[i]));
+  });
+  syncToggles(); refreshHome(); renderSetupNamesOnly();
+}
 
 // fullscreen (optional: hidden where the browser refuses it)
 const fsEl = document.documentElement;
@@ -726,19 +819,19 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 // ---------------------------------------------------------------- HOME
 const choir = $('choir');
 MONSTERS.forEach((m, i) => {
-  const b = document.createElement('button'); b.className = 'singer'; b.setAttribute('aria-label', `${m.name}, la note ${m.note}`);
-  b.innerHTML = `<img src="${SPR[i].normal}" alt=""><span class="nm" style="color:${m.light}">${m.name}</span><span class="nt">${m.note}</span>`;
-  const img = b.querySelector('img'); let t;
+  const b = document.createElement('button'); b.className = 'singer'; b.setAttribute('aria-label', t('singerAria', m.name, t('notes')[i]));
+  b.innerHTML = `<img src="${SPR[i].normal}" alt=""><span class="nm" style="color:${m.light}">${m.name}</span><span class="nt">${t('notes')[i]}</span>`;
+  const img = b.querySelector('img'); let tm;
   b.addEventListener('pointerdown', (e) => {
     e.preventDefault(); Sound.ensure(); Sound.note(i, 0.45);
     img.src = SPR[i].sing; b.classList.remove('lit'); void b.offsetWidth; b.classList.add('lit');
-    clearTimeout(t); t = setTimeout(() => { img.src = SPR[i].normal; b.classList.remove('lit'); }, 520);
+    clearTimeout(tm); tm = setTimeout(() => { img.src = SPR[i].normal; b.classList.remove('lit'); }, 520);
   });
   choir.appendChild(b);
 });
 function refreshHome() {
-  $('badgeSolo').textContent = D.best > 0 ? `Record : ${D.best} couleur${D.best > 1 ? 's' : ''}` : 'Pas encore de record';
-  $('badgeDuo').textContent = (D.tally[0] + D.tally[1]) ? `${pname(0)} : ${D.tally[0]} · ${pname(1)} : ${D.tally[1]}` : 'Pas encore de partie';
+  $('badgeSolo').textContent = D.best > 0 ? t('bestBadge', D.best) : t('bestNone');
+  $('badgeDuo').textContent = (D.tally[0] + D.tally[1]) ? t('tally', pname(0), D.tally[0], pname(1), D.tally[1]) : t('tallyNone');
 }
 $('btnSolo').onclick = () => { Sound.ensure(); startGame('solo'); };
 $('btnDuo').onclick = () => { Sound.ensure(); openSetup(); };
@@ -754,7 +847,7 @@ function renderSetup() {
     $('av' + p).querySelector('img').src = SPR[D.avatars[p]].normal;
     if (document.activeElement !== $('name' + p)) $('name' + p).value = D.names[p];
   });
-  $('starterName').textContent = D.names[D.starter] || `Joueur ${D.starter + 1}`;
+  $('starterName').textContent = pname(D.starter);
 }
 function openSetup() { renderSetup(); show('setup'); }
 [0, 1].forEach(p => {
@@ -765,15 +858,14 @@ function openSetup() { renderSetup(); show('setup'); }
   };
   $('name' + p).addEventListener('input', (e) => { D.names[p] = e.target.value.trim().slice(0, 12); renderSetupNamesOnly(); Store.save(); });
 });
-function renderSetupNamesOnly() { $('starterName').textContent = D.names[D.starter] || `Joueur ${D.starter + 1}`; }
+function renderSetupNamesOnly() { $('starterName').textContent = pname(D.starter); }
 $('swapStarter').onclick = () => { D.starter = 1 - D.starter; Store.save(); renderSetup(); };
 $('setupBack').onclick = () => { refreshHome(); show('home'); };
 $('duoGo').onclick = () => {
   Sound.ensure();
-  [0, 1].forEach(p => { if (!D.names[p]) D.names[p] = `Joueur ${p + 1}`; });
   Store.save(); startGame('duo');
 };
-const pname = (p) => D.names[p] || `Joueur ${p + 1}`;
+function pname(p) { return D.names[p] || t('player', p + 1); }
 
 // ---------------------------------------------------------------- DISC
 const ring = $('ring'), disc = $('disc'), stage = $('stage');
@@ -900,7 +992,7 @@ function renderChips() {
   const box = $('chips'); box.textContent = '';
   if (mode === 'solo') {
     const c = document.createElement('span'); c.className = 'chip solo';
-    c.innerHTML = `<img src="${ICON.crown}" alt=""><span class="nm">Record ${Math.max(D.best, game ? game.best() : 0)}</span>`;
+    c.innerHTML = `<img src="${ICON.crown}" alt=""><span class="nm">${t('chipBest', Math.max(D.best, game ? game.best() : 0))}</span>`;
     box.appendChild(c);
   } else {
     [0, 1].forEach(p => {
@@ -924,7 +1016,7 @@ function startGame(m) {
   disc.classList.remove('shake');
   game.start();
   renderChips();
-  setHub(1, 'Prêt ?'); setDots(0, 0); hub.classList.remove('input');
+  setHub(1, t('ready')); setDots(0, 0); hub.classList.remove('input');
   show('game');
   keepAwake();
   guard(beginTurn(id, true));
@@ -952,13 +1044,13 @@ async function handoff(id) {
   turnStage = 'handoff';
   const p = game.state.player, len = game.state.sequence.length;
   renderChips();
-  setHub(len, `À ${pname(p)}`); setDots(0, 0); hub.classList.remove('input');
+  setHub(len, t('hubTurnOf', pname(p))); setDots(0, 0); hub.classList.remove('input');
   $('handoffImg').src = SPR[D.avatars[p]].sing;
-  $('handoffTitle').textContent = `Au tour de ${pname(p)} !`;
-  $('handoffSub').textContent = len === 1 ? 'Écoute bien le premier monstre.' : `La chanson a ${len} notes. Écoute bien !`;
+  $('handoffTitle').textContent = t('turnOf', pname(p));
+  $('handoffSub').textContent = len === 1 ? t('firstListen') : t('songHas', len);
   const ov = $('handoff'); ov.hidden = false; ov.classList.remove('enter'); void ov.offsetWidth; ov.classList.add('enter');
   const card = ov.querySelector('.card'); card.classList.remove('enter'); void card.offsetWidth; card.classList.add('enter');
-  Voice.say(`À toi, ${pname(p)} !`);
+  Voice.say(t('yourTurnName', pname(p)));
   await waitTap($('handoffGo'), id);
   ov.hidden = true;
   await sleep(250, id);
@@ -970,7 +1062,7 @@ async function playSequence(id) {
   const seq = game.sequence(), len = seq.length;
   renderChips();
   hub.classList.remove('input');
-  setHub(len, 'Écoute…'); setDots(0, len > 12 ? 0 : len);
+  setHub(len, t('listen')); setDots(0, len > 12 ? 0 : len);
   if (len > 12) $('hubDots').textContent = '';
   await sleep(650, id);
   const { on, gap } = E.timing(len, D.speed);
@@ -980,7 +1072,7 @@ async function playSequence(id) {
   }
   game.showDone();
   turnStage = 'input';
-  setHub(len, mode === 'duo' ? `À toi, ${pname(game.state.player)} !` : 'À toi !');
+  setHub(len, mode === 'duo' ? t('yourTurnName', pname(game.state.player)) : t('yourTurn'));
   setDots(0, len);
   hub.classList.add('input');
 }
@@ -991,7 +1083,7 @@ function onPad(p) {
   const st = game.state;
   if (st.phase === 'showing') {          // tapping during the song: gentle reminder, no penalty
     const now = performance.now();
-    if (now - waitHintT > 1200) { waitHintT = now; const prev = $('hubLbl').textContent; $('hubLbl').textContent = 'Attends, écoute !'; setTimeout(() => { if (game && game.state.phase === 'showing') $('hubLbl').textContent = prev; }, 900); }
+    if (now - waitHintT > 1200) { waitHintT = now; const prev = $('hubLbl').textContent; $('hubLbl').textContent = t('waitListen'); setTimeout(() => { if (game && game.state.phase === 'showing') $('hubLbl').textContent = prev; }, 900); }
     return;
   }
   if (st.phase !== 'input') return;
@@ -1004,13 +1096,13 @@ function onPad(p) {
 async function roundDone(r, id) {
   turnStage = 'between';
   hub.classList.remove('input');
-  const cheers = ['Bravo !', 'Super !', 'Génial !', 'Trop fort !', 'Oui !'];
+  const cheers = t('cheers');
   setHub(r.completed, cheers[r.completed % cheers.length], { pop: true });
   if (mode === 'solo') renderChips();
   await sleep(380, id);
   Sound.chime();
   const milestone = r.completed % 5 === 0;
-  if (milestone) { Sound.fanfare(); confetti(70); Voice.say(`${r.completed} notes, bravo !`); }
+  if (milestone) { Sound.fanfare(); confetti(70); Voice.say(t('milestone', r.completed)); }
   await sleep(milestone ? 1300 : 750, id);
   await beginTurn(id, false);
 }
@@ -1021,11 +1113,11 @@ async function mistake(p, r, id) {
   for (let i = 0; i < 5; i++) setMood(i, 'oops');
   padEls[p].classList.add('lit'); setTimeout(() => padEls[p].classList.remove('lit'), 380);
   disc.classList.remove('shake'); void disc.offsetWidth; disc.classList.add('shake');
-  setHub(r.length, 'Oups !', { pop: true });
+  setHub(r.length, t('oops'), { pop: true });
   await sleep(1100, id);
   // show which monster it was
   setMood(r.expected, 'normal');
-  setHub(r.length, `C'était ${MONSTERS[r.expected].name} !`);
+  setHub(r.length, t('itWas', MONSTERS[r.expected].name));
   flash(r.expected, 520, { fx: true });
   await sleep(760, id);
   flash(r.expected, 520, { fx: false });
@@ -1042,12 +1134,12 @@ function showOver(r) {
     if (completed > D.best) { D.best = completed; Store.save(); }
     card.innerHTML = `
       <div class="hero${isRecord ? ' crowned' : ''}"><img class="m" alt="" src="${isRecord ? SPR[r.expected].sing : SPR[r.expected].oops}">${isRecord ? `<img class="crown" alt="" src="${ICON.crown}">` : ''}</div>
-      <h3>${isRecord ? 'Nouveau record !' : 'Oups !'}</h3>
-      <p>${completed === 0 ? 'Pas grave, on recommence ?' : `Tu as retenu <span class="score">${completed}</span> note${completed > 1 ? 's' : ''} d'affilée.`}</p>
-      ${isRecord ? '' : `<span class="stat"><img alt="" src="${ICON.crown}">Record : ${D.best}</span>`}
-      <div class="actions"><button class="btn btn-go" id="againBtn">Rejouer</button><button class="btn btn-ghost" id="menuBtn">Menu</button></div>`;
-    if (isRecord) { Sound.fanfare(); confetti(160); Voice.say(`Nouveau record ! ${completed} notes !`); }
-    else Voice.say(completed === 0 ? 'Oups ! On recommence ?' : `Oups ! ${completed} note${completed > 1 ? 's' : ''}, bravo !`);
+      <h3>${isRecord ? t('newRecord') : t('oops')}</h3>
+      <p>${completed === 0 ? t('tryAgain') : t('remembered', completed)}</p>
+      ${isRecord ? '' : `<span class="stat"><img alt="" src="${ICON.crown}">${t('bestStat', D.best)}</span>`}
+      <div class="actions"><button class="btn btn-go" id="againBtn">${t('replay')}</button><button class="btn btn-ghost" id="menuBtn">${t('menu')}</button></div>`;
+    if (isRecord) { Sound.fanfare(); confetti(160); Voice.say(t('sayRecord', completed)); }
+    else Voice.say(completed === 0 ? t('sayOops0') : t('sayOops', completed));
   } else {
     const loser = r.loser, winner = 1 - loser;
     D.tally[winner]++; D.starter = 1 - D.starter; Store.save();
@@ -1056,15 +1148,15 @@ function showOver(r) {
       <h3></h3>
       <p class="why"></p>
       <span class="stat tally"></span>
-      <div class="actions"><button class="btn btn-go" id="againBtn">Revanche !</button><button class="btn btn-ghost" id="menuBtn">Menu</button></div>`;
-    card.querySelector('h3').textContent = `${pname(winner)} gagne !`;
+      <div class="actions"><button class="btn btn-go" id="againBtn">${t('rematch')}</button><button class="btn btn-ghost" id="menuBtn">${t('menu')}</button></div>`;
+    card.querySelector('h3').textContent = t('wins', pname(winner));
     card.querySelector('.why').textContent = r.length === 1
-      ? `${pname(loser)} a fait une erreur dès la première note.`
-      : `${pname(loser)} a fait une erreur à la note ${r.position} sur ${r.length}.`;
+      ? t('errFirst', pname(loser))
+      : t('errAt', pname(loser), r.position, r.length);
     card.querySelector('.tally').innerHTML = `<img alt="" src="${ICON.trophy}"><span></span>`;
-    card.querySelector('.tally span').textContent = `${pname(0)} : ${D.tally[0]} · ${pname(1)} : ${D.tally[1]}`;
+    card.querySelector('.tally span').textContent = t('tally', pname(0), D.tally[0], pname(1), D.tally[1]);
     Sound.fanfare(); confetti(140);
-    Voice.say(`Bravo ${pname(winner)} !`);
+    Voice.say(t('sayWin', pname(winner)));
     renderChips();
   }
   ov.hidden = false; ov.classList.remove('enter'); void ov.offsetWidth; ov.classList.add('enter');
@@ -1112,8 +1204,7 @@ function confetti(n) {
 }
 
 // ---------------------------------------------------------------- boot
-syncToggles();
-refreshHome();
+applyLang();
 show('home');
 
 // test hook (harmless in normal use)
