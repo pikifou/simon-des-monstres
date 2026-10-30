@@ -9,4 +9,6 @@ La chanson grandit d'une note à chaque tour. On peut jouer seul (avec un record
 Sur une tablette Android, ouvrez le lien dans Chrome puis touchez « Installer l'appli » (ou menu ⋮ → « Installer l'application »).
 L'appli s'ouvre alors en plein écran et marche sans connexion.
 
+Compatible Ludiworld : la fiche du jeu est `ludi.json` et le kit `ludi.js` (copie de https://pikifou.github.io/ludiworld/kit/ludi.js) remonte au launcher les fins de partie, le record solo et les chansons retenues ; ouvert seul, le jeu ne change pas.
+
 Personnages et décors générés avec Higgsfield. Polices : Grandstander et Andika (SIL Open Font License).

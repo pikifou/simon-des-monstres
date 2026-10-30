@@ -1,5 +1,5 @@
 // Simon des Monstres: offline cache. The version changes with every build, which refreshes the cache.
-const VERSION = 'simon-47bc17e696';
+const VERSION = 'simon-ludi-0-2-0-1';
 const FILES = [
  "./",
  "assets/bg-land.webp",
@@ -35,6 +35,7 @@ const FILES = [
  "icons/icon-maskable-192.png",
  "icons/icon-maskable-512.png",
  "index.html",
+ "ludi.js",
  "manifest.webmanifest",
  "screens/jeu-paysage.webp",
  "screens/jeu-portrait.webp"
@@ -70,6 +71,9 @@ self.addEventListener('fetch', (e) => {
     );
     return;
   }
+
+  // La fiche Ludiworld : toujours le réseau, jamais en cache.
+  if (url.pathname.endsWith('/ludi.json')) return;
 
   // Images, fonts, icons: cache first.
   e.respondWith(

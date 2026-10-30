@@ -277,6 +277,12 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   .title .simon { font-size: 64px; } .title .des { font-size: 26px; }
   .singer img { max-width: 96px; }
 }
+/* Dans Ludiworld (classe .ludi posée sur <html> quand le kit voit le launcher) : le coin haut gauche est au bouton « ← Ludiworld » du launcher
+   (8 px du bord, environ 117 × 34 px). Langue, bouton maison et retour se poussent à sa droite ou en dessous. */
+.ludi .home-lang { left: 136px; }
+.ludi .topbar { padding-left: 136px; }
+.ludi #setup .wrap { padding-top: 56px; }
+@media (max-width: 640px) { .ludi .topbar { padding-left: 16px; padding-top: 50px; } }
 @media (prefers-reduced-motion: reduce) {
   .fly, .title .simon span, .singer img, .mon .in, .card .hero img, .hub.input .lbl { animation: none !important; }
   .screen.enter, .card.enter, .overlay.enter { animation-duration: .01s; }
@@ -428,6 +434,7 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   </div>
 </div>
 
+<script src="ludi.js"></script>
 <script>
 // ---- Simon engine: pure logic, no DOM (unit-tested in node) ----
 const SimonEngine = (() => {
@@ -562,6 +569,18 @@ const D = Store.data;
 // names left at a default label are stored empty so they follow the language
 D.names = D.names.map(n => /^(Joueur|Player) [12]$/.test(n || '') ? '' : (n || ''));
 if (D.lang !== 'fr' && D.lang !== 'en') D.lang = /^fr/i.test(navigator.language || 'fr') ? 'fr' : 'en';
+
+// ---------------------------------------------------------------- Ludiworld (kit ludi.js)
+// Ouvert seul, le kit garde ses données dans le navigateur et le jeu ne change pas.
+// Ouvert depuis le launcher Ludiworld, fins de partie (checkpoint), record solo et chansons retenues lui remontent.
+const LUDI = window.Ludi ? window.Ludi.init({ game: 'simon-des-monstres' }) : null;
+const DANS_LUDI = !!(LUDI && LUDI.inLauncher());
+if (DANS_LUDI) document.documentElement.classList.add('ludi');
+// Une chanson rejouée en entier (juste) ou ratée (faux), par longueur. En solo seulement : à deux, on ne sait pas qui joue.
+function ludiChanson(n, juste) {
+  if (!LUDI || mode !== 'solo') return;
+  LUDI.skill('memoire.sequences', n <= 3 ? '1-3' : n <= 6 ? '4-6' : n <= 9 ? '7-9' : n <= 12 ? '10-12' : '13+', juste);
+}
 
 // ---------------------------------------------------------------- languages
 const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
@@ -793,8 +812,9 @@ function applyLang() {
 const fsEl = document.documentElement;
 const canFs = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
 const isApp = matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches;
-if (canFs && !isApp) $('btnFull').hidden = false;
+if (canFs && !isApp && !DANS_LUDI) $('btnFull').hidden = false; // dans Ludiworld, c'est Ludiworld qui décide du plein écran
 $('btnFull').onclick = () => {
+  if (DANS_LUDI) return;
   try {
     if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
     else { const r = (fsEl.requestFullscreen || fsEl.webkitRequestFullscreen).call(fsEl); if (r && r.catch) r.catch(() => {}); }
@@ -803,7 +823,7 @@ $('btnFull').onclick = () => {
 
 // install prompt (Chrome / Android): shown only when the browser offers it
 let installEvt = null;
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; $('btnInstall').hidden = false; });
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); if (DANS_LUDI) return; installEvt = e; $('btnInstall').hidden = false; }); // pas d'« installer » dans Ludiworld
 window.addEventListener('appinstalled', () => { installEvt = null; $('btnInstall').hidden = true; });
 $('btnInstall').onclick = async () => {
   if (!installEvt) return;
@@ -1089,8 +1109,8 @@ function onPad(p) {
   if (st.phase !== 'input') return;
   const r = game.press(p);
   if (r.type === 'correct') { flash(p, 300); setDots(r.progress, r.length); }
-  else if (r.type === 'round') { flash(p, 300); setDots(r.completed, r.completed); guard(roundDone(r, runId)); }
-  else if (r.type === 'wrong') { guard(mistake(p, r, runId)); }
+  else if (r.type === 'round') { flash(p, 300); setDots(r.completed, r.completed); ludiChanson(r.completed, true); guard(roundDone(r, runId)); }
+  else if (r.type === 'wrong') { ludiChanson(r.length, false); guard(mistake(p, r, runId)); }
 }
 
 async function roundDone(r, id) {
@@ -1140,6 +1160,7 @@ function showOver(r) {
       <div class="actions"><button class="btn btn-go" id="againBtn">${t('replay')}</button><button class="btn btn-ghost" id="menuBtn">${t('menu')}</button></div>`;
     if (isRecord) { Sound.fanfare(); confetti(160); Voice.say(t('sayRecord', completed)); }
     else Voice.say(completed === 0 ? t('sayOops0') : t('sayOops', completed));
+    if (LUDI && completed > 0) LUDI.score('record-solo', completed, { better: 'higher' });
   } else {
     const loser = r.loser, winner = 1 - loser;
     D.tally[winner]++; D.starter = 1 - D.starter; Store.save();
@@ -1161,6 +1182,8 @@ function showOver(r) {
   }
   ov.hidden = false; ov.classList.remove('enter'); void ov.offsetWidth; ov.classList.add('enter');
   card.classList.remove('enter'); void card.offsetWidth; card.classList.add('enter');
+  // Fin de partie : l'enfant peut s'arrêter ici sans rien perdre (fin douce de Ludiworld).
+  if (LUDI) LUDI.checkpoint(mode === 'solo' ? 'fin-partie-solo' : 'fin-partie-duo');
   $('againBtn').onclick = () => { Sound.ensure(); startGame(mode); };
   $('menuBtn').onclick = () => { newRun(); game = null; hideOverlays(); refreshHome(); show('home'); };
 }
@@ -1180,6 +1203,14 @@ $('quitNo').onclick = () => {
   if (turnStage === 'between' || turnStage === 'handoff') { $('handoff').hidden = true; guard(beginTurn(id, false)); return; }
   if (game.replay()) guard(playSequence(id));
 };
+
+// Le launcher Ludiworld demande une pause (temps de jeu écoulé) : la voix se tait, la chanson s'arrête et le tour
+// attend un toucher, exactement comme avec le bouton maison (« Je continue » rejoue le tour depuis le début).
+if (LUDI) LUDI.onPause(() => {
+  try { speechSynthesis.cancel(); } catch (e) {}
+  const enCours = game && (game.state.phase === 'showing' || game.state.phase === 'input');
+  if (app.dataset.screen === 'game' && enCours && $('quitModal').hidden) $('btnQuit').click();
+});
 
 // ---------------------------------------------------------------- confetti
 function confetti(n) {
