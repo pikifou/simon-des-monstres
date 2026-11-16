@@ -4,11 +4,13 @@ Un Simon à cinq monstres chanteurs (Do, Ré, Mi, Sol, La) pour tablette, en fra
 *A five-monster Simon game for tablets, in French and English.*
 La chanson grandit d'une note à chaque tour. On peut jouer seul (avec un record) ou à deux, chacun son tour : le premier qui se trompe a perdu.
 
+Une petite histoire : la chorale des monstres prépare un grand concert. En solo, retenir une chanson de 8 notes fait le concert (une courte vidéo, puis une image), et le jeu est « Fini » ; la chanson continue ensuite de grandir comme avant. Les vidéos (`assets/cine/`) ne sont pas gardées hors ligne : sans réseau, le jeu montre directement l'image.
+
 **Jouer :** https://pikifou.github.io/simon-des-monstres/
 
 Sur une tablette Android, ouvrez le lien dans Chrome puis touchez « Installer l'appli » (ou menu ⋮ → « Installer l'application »).
 L'appli s'ouvre alors en plein écran et marche sans connexion.
 
-Compatible Ludiworld : la fiche du jeu est `ludi.json` et le kit `ludi.js` (copie de https://pikifou.github.io/ludiworld/kit/ludi.js) remonte au launcher les fins de partie, le record solo et les chansons retenues ; ouvert seul, le jeu ne change pas.
+Compatible Ludiworld : la fiche du jeu est `ludi.json` et le kit `ludi.js` (copie de https://pikifou.github.io/ludiworld/kit/ludi.js) remonte au launcher les fins de partie, le record solo, les chansons retenues et le concert (« Fini ») ; ouvert seul, le jeu ne change pas.
 
 Personnages et décors générés avec Higgsfield. Polices : Grandstander et Andika (SIL Open Font License).

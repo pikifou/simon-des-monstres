@@ -1,9 +1,11 @@
 // Simon des Monstres: offline cache. The version changes with every build, which refreshes the cache.
-const VERSION = 'simon-ludi-0-2-0-1';
+const VERSION = 'simon-histoire-0-4-0-1';
 const FILES = [
  "./",
  "assets/bg-land.webp",
  "assets/bg-port.webp",
+ "assets/histoire-debut.webp",
+ "assets/histoire-fin.webp",
  "assets/i-crown.webp",
  "assets/i-note.webp",
  "assets/i-star.webp",
@@ -71,6 +73,9 @@ self.addEventListener('fetch', (e) => {
     );
     return;
   }
+
+  // Les petites vidéos de l'histoire : directement au réseau (lecture par morceaux), jamais en cache. Hors ligne, le jeu montre l'image.
+  if (url.pathname.includes('/cine/')) return;
 
   // La fiche Ludiworld : toujours le réseau, jamais en cache.
   if (url.pathname.endsWith('/ludi.json')) return;

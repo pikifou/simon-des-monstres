@@ -277,6 +277,40 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   .title .simon { font-size: 64px; } .title .des { font-size: 26px; }
   .singer img { max-width: 96px; }
 }
+/* ---------- HISTOIRE : l'intro (la chorale prépare son concert) et la fin (le concert) ----------
+   Une petite vidéo si elle se charge, puis l'image fixe avec le texte et un bouton. « Passer » toujours possible. */
+#cine { position: fixed; inset: 0; z-index: 40; background: #0b0820; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+#cine .flou { position: absolute; inset: -40px; background: center / cover no-repeat; filter: blur(28px) brightness(.45) saturate(1.1); }
+#cine .cadre { position: relative; width: min(100vw, 75vh); aspect-ratio: 3 / 4; overflow: hidden; box-shadow: 0 0 60px rgba(0,0,0,.5); }
+#cine video, #cine .cadre img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+#cine .cadre img { opacity: 0; transition: opacity .6s; }
+#cine.texte .cadre img { opacity: 1; }
+#cine h2 { position: absolute; top: max(4%, env(safe-area-inset-top)); left: 0; right: 0; margin: 0; text-align: center; font-family: var(--font-display); font-weight: 900;
+  font-size: clamp(38px, 7vh, 72px); color: var(--moon); text-shadow: 0 4px 0 rgba(10,6,30,.7), 0 0 30px rgba(255,238,176,.45); opacity: 0; transform: scale(.8);
+  transition: opacity .6s .2s, transform .6s cubic-bezier(.2, 1.4, .4, 1) .2s; }
+#cine.texte h2 { opacity: 1; transform: none; }
+#cine .txt { position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 70px 16px max(22px, env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  background: linear-gradient(rgba(11,8,32,0), rgba(11,8,32,.82) 38%, rgba(11,8,32,.94));
+  opacity: 0; transform: translateY(20px); transition: opacity .6s .3s, transform .6s .3s; pointer-events: none; }
+#cine.texte .txt { opacity: 1; transform: none; pointer-events: auto; }
+#cine p { margin: 0; max-width: 34em; font-family: var(--font-display); font-weight: 800; font-size: clamp(19px, 2.9vh, 28px); line-height: 1.25; color: var(--ink); text-wrap: balance;
+  text-shadow: 0 2px 0 rgba(10,6,30,.8); }
+#cine p.l2 { font-family: var(--font-body); font-weight: 700; font-size: clamp(17px, 2.4vh, 23px); color: var(--ink-soft); }
+#cine .go { margin-top: 6px; }
+#cine .passer { position: absolute; top: max(14px, env(safe-area-inset-top)); right: 16px; min-height: 48px; padding: 8px 20px; font-size: 18px; }
+#cine.texte .passer { display: none; }
+/* téléphone en hauteur : l'image en haut, le texte en dessous */
+@media (max-aspect-ratio: 3/5) { #cine { justify-content: flex-start; } #cine .cadre { margin-top: max(64px, env(safe-area-inset-top)); } }
+
+/* la marque « Fini » sur la carte « Tout seul » : une forme (rond coché) et un mot, pas seulement une couleur */
+.mode .fini { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; font-family: var(--font-display); font-weight: 900; font-size: 16px;
+  letter-spacing: .04em; text-transform: uppercase; padding: 3px 12px 3px 4px; border-radius: 999px; background: var(--moon); color: var(--moon-ink); }
+.mode .fini svg { width: 22px; height: 22px; }
+.mode .rangee { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
+.mode .rangee .badge { margin-top: 0; }
+.chip.concert img { width: 36px; height: 36px; margin-left: 4px; }
+
 /* Dans Ludiworld (classe .ludi posée sur <html> quand le kit voit le launcher) : le coin haut gauche est au bouton « ← Ludiworld » du launcher
    (8 px du bord, environ 117 × 34 px). Langue, bouton maison et retour se poussent à sa droite ou en dessous. */
 .ludi .home-lang { left: 136px; }
@@ -286,6 +320,7 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 @media (prefers-reduced-motion: reduce) {
   .fly, .title .simon span, .singer img, .mon .in, .card .hero img, .hub.input .lbl { animation: none !important; }
   .screen.enter, .card.enter, .overlay.enter { animation-duration: .01s; }
+  #cine .cadre img, #cine h2, #cine .txt { transition: none; }
 }
 </style>
 </head>
@@ -329,8 +364,8 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
         <button class="mode solo" id="btnSolo">
           <img class="ic" src="assets/i-star.webp" alt="">
           <span class="mt" data-i18n="solo">Tout seul</span>
-          <span class="ms" data-i18n="soloSub">Jusqu'où iras-tu ?</span>
-          <span class="badge" id="badgeSolo">Pas encore de record</span>
+          <span class="ms" id="soloSub">Retiens la chanson du concert : 8 notes !</span>
+          <span class="rangee"><span class="fini" id="finiSolo" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#2d2166"/><path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="#ffeeb0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="finiTxt">Fini</span></span><span class="badge" id="badgeSolo">Pas encore de record</span></span>
         </button>
         <button class="mode duo" id="btnDuo">
           <img class="ic" src="assets/i-trophy.webp" alt="">
@@ -432,6 +467,14 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       </div>
     </div>
   </div>
+</div>
+
+<div id="cine" hidden role="dialog" aria-modal="true">
+  <div class="flou"></div>
+  <div class="cadre"><video playsinline muted preload="none"></video><img alt=""></div>
+  <h2></h2>
+  <div class="txt"><p class="l1"></p><p class="l2"></p><button type="button" class="btn btn-go go"></button></div>
+  <button type="button" class="btn btn-ghost passer"></button>
 </div>
 
 <script src="ludi.js"></script>
@@ -560,7 +603,7 @@ Object.values(ICON).forEach(src => { const im = new Image(); im.src = src; prelo
 // ---------------------------------------------------------------- storage (per device, optional)
 const Store = {
   key: 'simon-des-monstres-v1',
-  data: { names: ['', ''], avatars: [1, 0], speed: 'normal', voice: true, sound: true, best: 0, tally: [0, 0], starter: 0, lang: '' },
+  data: { names: ['', ''], avatars: [1, 0], speed: 'normal', voice: true, sound: true, best: 0, tally: [0, 0], starter: 0, lang: '', concert: false },
   load() { try { const s = localStorage.getItem(this.key); if (s) Object.assign(this.data, JSON.parse(s)); } catch (e) {} },
   save() { try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch (e) {} },
 };
@@ -576,6 +619,12 @@ if (D.lang !== 'fr' && D.lang !== 'en') D.lang = /^fr/i.test(navigator.language 
 const LUDI = window.Ludi ? window.Ludi.init({ game: 'simon-des-monstres' }) : null;
 const DANS_LUDI = !!(LUDI && LUDI.inLauncher());
 if (DANS_LUDI) document.documentElement.classList.add('ludi');
+// La fin du jeu : en solo, retenir une chanson de CONCERT notes fait le concert de la chorale (une fois pour toutes, Ludi.fini()).
+// Le jeu continue ensuite comme avant, sans fin. Un record déjà à 8 ou plus (joué avant l'histoire) compte aussi : le jeu est
+// fini, et la scène du concert se joue la prochaine fois que la chanson atteint 8 notes (D.concert : scène déjà vue).
+const CONCERT = 8;
+const estFini = () => D.best >= CONCERT;
+if (LUDI && estFini()) LUDI.fini();
 // Une chanson rejouée en entier (juste) ou ratée (faux), par longueur. En solo seulement : à deux, on ne sait pas qui joue.
 function ludiChanson(n, juste) {
   if (!LUDI || mode !== 'solo') return;
@@ -611,6 +660,13 @@ const I18N = {
     wins: (n) => `${n} gagne !`, errFirst: (n) => `${n} a fait une erreur dès la première note.`,
     errAt: (n, p, l) => `${n} a fait une erreur à la note ${p} sur ${l}.`, sayWin: (n) => `Bravo ${n} !`,
     quitTitle: 'On arrête ?', quitText: 'La partie en cours sera perdue.', quitNo: 'Je continue', quitYes: 'Retour au menu',
+    soloGoal: (n) => `Retiens la chanson du concert : ${n} notes !`, fini: 'Fini',
+    chipConcert: (a, n) => `Concert ${a}/${n}`,
+    story1: 'Ce soir, la chorale des monstres donne un grand concert dans la forêt !',
+    story2: (n) => `Mais leur chanson est longue : aide-les à la retenir, jusqu'à ${n} notes.`, storyGo: "C'est parti !", skip: 'Passer',
+    endTitle: 'Le concert !', end1: (n) => `Bravo, tu as retenu la chanson du concert : ${n} notes !`,
+    end2: 'Les monstres chantent pour toute la forêt. Et la chanson peut encore grandir…', endGo: 'Continuer la chanson',
+    sayConcert: 'Bravo ! Le concert peut commencer !',
   },
   en: {
     docTitle: 'Simon and the Monsters', homeAria: 'Home', install: 'Install the app', fullscreen: 'Full screen',
@@ -638,6 +694,13 @@ const I18N = {
     wins: (n) => `${n} wins!`, errFirst: (n) => `${n} made a mistake on the very first note.`,
     errAt: (n, p, l) => `${n} made a mistake on note ${p} of ${l}.`, sayWin: (n) => `Well done, ${n}!`,
     quitTitle: 'Stop playing?', quitText: 'This game will be lost.', quitNo: 'Keep playing', quitYes: 'Back to menu',
+    soloGoal: (n) => `Remember the concert song: ${n} notes!`, fini: 'Finished',
+    chipConcert: (a, n) => `Concert ${a}/${n}`,
+    story1: 'Tonight, the monster choir is giving a big concert in the forest!',
+    story2: (n) => `But their song is long: help them remember it, all the way to ${n} notes.`, storyGo: "Let's go!", skip: 'Skip',
+    endTitle: 'The concert!', end1: (n) => `Well done, you remembered the concert song: ${n} notes!`,
+    end2: 'The monsters sing for the whole forest. And the song can keep on growing…', endGo: 'Keep singing',
+    sayConcert: 'Well done! The concert can begin!',
   },
 };
 const t = (k, ...a) => { const v = I18N[D.lang][k] ?? I18N.fr[k]; return typeof v === 'function' ? v(...a) : v; };
@@ -851,9 +914,56 @@ MONSTERS.forEach((m, i) => {
 });
 function refreshHome() {
   $('badgeSolo').textContent = D.best > 0 ? t('bestBadge', D.best) : t('bestNone');
+  $('soloSub').textContent = estFini() ? t('soloSub') : t('soloGoal', CONCERT);
+  $('finiSolo').hidden = !estFini(); $('finiTxt').textContent = t('fini');
   $('badgeDuo').textContent = (D.tally[0] + D.tally[1]) ? t('tally', pname(0), D.tally[0], pname(1), D.tally[1]) : t('tallyNone');
 }
-$('btnSolo').onclick = () => { Sound.ensure(); startGame('solo'); };
+// L'intro se montre au premier « Tout seul » de chaque ouverture du jeu, tant que le concert n'est pas fait ; ensuite plus du tout.
+let introVue = false;
+$('btnSolo').onclick = () => {
+  Sound.ensure();
+  if (!introVue && !estFini()) { introVue = true; cinematique('intro').then(() => startGame('solo')); return; }
+  startGame('solo');
+};
+
+// ---------------------------------------------------------------- HISTOIRE (intro et fin)
+// Une petite vidéo si elle se charge (en ligne, sans « mouvement réduit »), puis l'image fixe avec le texte et un bouton.
+// Hors ligne ou sans vidéo : directement l'image et le texte. « Passer » saute la vidéo.
+const CINE = {
+  intro: { video: 'assets/cine/intro.mp4', image: 'assets/histoire-debut.webp', titre: null, l1: 'story1', l2: 'story2', go: 'storyGo' },
+  fin: { video: 'assets/cine/fin.mp4', image: 'assets/histoire-fin.webp', titre: 'endTitle', l1: 'end1', l2: 'end2', go: 'endGo' },
+};
+let cineOuverte = false;
+function cinematique(nom) {
+  return new Promise((done) => {
+    const c = CINE[nom], box = $('cine'), vid = box.querySelector('video'), img = box.querySelector('.cadre img'), h2 = box.querySelector('h2');
+    cineOuverte = true;
+    try { speechSynthesis.cancel(); } catch (e) {}
+    h2.textContent = c.titre ? t(c.titre) : ''; h2.hidden = !c.titre;
+    box.querySelector('.l1').textContent = t(c.l1, CONCERT); box.querySelector('.l2').textContent = t(c.l2, CONCERT);
+    const go = box.querySelector('.go'), passer = box.querySelector('.passer');
+    go.textContent = t(c.go); passer.textContent = t('skip');
+    img.src = c.image; box.querySelector('.flou').style.backgroundImage = `url("${c.image}")`;
+    box.classList.remove('texte'); box.hidden = false;
+    let attente = 0;
+    const texte = () => {
+      clearTimeout(attente); vid.pause(); if (box.classList.contains('texte')) return;
+      box.classList.add('texte'); setTimeout(() => go.focus({ preventScroll: true }), 50);
+      if (nom === 'fin') { Sound.fanfare(); confetti(160); Voice.say(t('sayConcert')); }
+    };
+    vid.onended = texte; vid.onerror = texte;
+    const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (c.video && !reduit && navigator.onLine !== false) {
+      vid.hidden = false; vid.src = c.video;
+      // une vidéo qui ne démarre pas (réseau lent, coupé) laisse la place à l'image
+      attente = setTimeout(() => { if (vid.paused || vid.currentTime === 0) texte(); }, 4000);
+      vid.onplaying = () => clearTimeout(attente);
+      const p = vid.play(); if (p && p.catch) p.catch(texte);
+    } else { vid.hidden = true; vid.removeAttribute('src'); texte(); }
+    passer.onclick = texte;
+    go.onclick = () => { clearTimeout(attente); vid.onended = vid.onerror = vid.onplaying = null; vid.pause(); vid.removeAttribute('src'); vid.load(); box.hidden = true; cineOuverte = false; done(); };
+  });
+}
 $('btnDuo').onclick = () => { Sound.ensure(); openSetup(); };
 
 // ---------------------------------------------------------------- SETUP
@@ -1001,7 +1111,7 @@ disc.addEventListener('pointerdown', (e) => {
   if (p >= 0) onPad(p);
 });
 window.addEventListener('keydown', (e) => {
-  if (app.dataset.screen !== 'game' || !$('quitModal').hidden) return;
+  if (app.dataset.screen !== 'game' || !$('quitModal').hidden || cineOuverte) return;
   const k = '12345'.indexOf(e.key);
   if (k >= 0) { Sound.ensure(); onPad(k); }
 });
@@ -1014,6 +1124,11 @@ function renderChips() {
     const c = document.createElement('span'); c.className = 'chip solo';
     c.innerHTML = `<img src="${ICON.crown}" alt=""><span class="nm">${t('chipBest', Math.max(D.best, game ? game.best() : 0))}</span>`;
     box.appendChild(c);
+    if (!D.concert) { // le but de l'histoire, tant que le concert n'est pas fait : la chanson qui grandit vers 8 notes
+      const k = document.createElement('span'); k.className = 'chip solo concert';
+      k.innerHTML = `<img src="${ICON.note}" alt=""><span class="nm">${t('chipConcert', Math.min(CONCERT, game ? game.best() : 0), CONCERT)}</span>`;
+      box.appendChild(k);
+    }
   } else {
     [0, 1].forEach(p => {
       const c = document.createElement('span');
@@ -1120,6 +1235,18 @@ async function roundDone(r, id) {
   setHub(r.completed, cheers[r.completed % cheers.length], { pop: true });
   if (mode === 'solo') renderChips();
   await sleep(380, id);
+  if (mode === 'solo' && r.completed >= CONCERT && !D.concert) {
+    // La chanson du concert est retenue : c'est la fin de l'histoire. Le jeu est fini pour de bon, puis la partie continue.
+    D.concert = true; D.best = Math.max(D.best, r.completed); Store.save();
+    if (LUDI) { LUDI.fini(); LUDI.checkpoint('concert'); }
+    Sound.chime(); renderChips();
+    await sleep(600, id);
+    await cinematique('fin');
+    if (id !== runId) throw CANCEL;
+    await sleep(400, id);
+    await beginTurn(id, false);
+    return;
+  }
   Sound.chime();
   const milestone = r.completed % 5 === 0;
   if (milestone) { Sound.fanfare(); confetti(70); Voice.say(t('milestone', r.completed)); }
@@ -1209,7 +1336,7 @@ $('quitNo').onclick = () => {
 if (LUDI) LUDI.onPause(() => {
   try { speechSynthesis.cancel(); } catch (e) {}
   const enCours = game && (game.state.phase === 'showing' || game.state.phase === 'input');
-  if (app.dataset.screen === 'game' && enCours && $('quitModal').hidden) $('btnQuit').click();
+  if (app.dataset.screen === 'game' && enCours && $('quitModal').hidden && !cineOuverte) $('btnQuit').click();
 });
 
 // ---------------------------------------------------------------- confetti
@@ -1240,7 +1367,7 @@ show('home');
 
 // test hook (harmless in normal use)
 window.__simon = {
-  get game() { return game; }, get stage() { return turnStage; }, get runId() { return runId; }, store: D,
+  get game() { return game; }, get stage() { return turnStage; }, get runId() { return runId; }, store: D, CONCERT, cinematique,
   setTimeScale(s) { TIME_SCALE = s; }, padFromPoint,
 };
 })();
