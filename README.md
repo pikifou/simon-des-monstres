@@ -15,4 +15,6 @@ Compatible Ludiworld : la fiche du jeu est `ludi.json` et le kit `ludi.js` (copi
 
 Le son suit le réglage de Ludiworld (kit 0.5) : tout est allumé au départ. Les notes des monstres et les petits sons suivent « bruitages », la voix qui lit les phrases suit « voix » ; pas de musique. Le haut-parleur du jeu ouvre un petit panneau à deux boutons, « Bruitages » et « Voix », chacun son réglage ; « Voix Oui / Non » de l'accueil règle la même voix. Dans Ludiworld, ces boutons changent le réglage de toute la maison. Test : `python tests/son.py` (serveur local sur le port 7370).
 
+La mémoire du jeu (prénoms, monstres, vitesse, record, victoires à deux, concert vu) est confiée à Ludiworld (`Ludi.save`, `Ludi.onRestore`) : elle suit l'enfant d'un appareil à l'autre. La langue reste sur l'appareil. Test : `python tests/sauvegarde.py` (port 7371).
+
 Personnages et décors générés avec Higgsfield. Polices : Grandstander et Andika (SIL Open Font License).

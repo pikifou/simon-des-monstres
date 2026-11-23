@@ -649,6 +649,24 @@ if (D.lang !== 'fr' && D.lang !== 'en') D.lang = /^fr/i.test(navigator.language 
 const LUDI = window.Ludi ? window.Ludi.init({ game: 'simon-des-monstres' }) : null;
 const DANS_LUDI = !!(LUDI && LUDI.inLauncher());
 if (DANS_LUDI) document.documentElement.classList.add('ludi');
+// La mémoire du jeu confiée à Ludiworld (Julien, 2026-11-23, comme les autres jeux) : prénoms, monstres, vitesse, record,
+// victoires à deux, concert vu. Elle suit l'enfant d'un appareil à l'autre et d'une adresse à l'autre. La langue reste
+// sur l'appareil. Ouvert seul, rien ne change : le kit la garde dans le navigateur.
+const PARTAGE = ['names', 'avatars', 'speed', 'best', 'tally', 'starter', 'concert'];
+const partage = () => { const o = {}; PARTAGE.forEach(k => { o[k] = D[k]; }); return o; };
+if (LUDI) {
+  const sauverIci = Store.save.bind(Store);
+  Store.save = function () { sauverIci(); try { LUDI.save(partage()); } catch (e) { /* rien */ } };
+  // Une mémoire plus récente venue d'un autre appareil : on la range comme la nôtre et on recharge.
+  LUDI.onRestore(d => {
+    if (!d || typeof d !== 'object' || !Array.isArray(d.names)) return;
+    PARTAGE.forEach(k => { if (k in d) D[k] = d[k]; });
+    sauverIci();
+    location.reload();
+  });
+  // Une mémoire d'avant ce changement : on la confie aussi (sans écraser une plus récente venue d'ailleurs).
+  try { if (localStorage.getItem(Store.key)) LUDI.save(partage(), { existante: true }); } catch (e) { /* rien */ }
+}
 // Le son (Julien, 2026-11-23) : réglé dans Ludiworld pour toute la maison, trois réglages séparés, tous allumés au départ.
 // Ici, les notes des monstres et les petits sons suivent « bruitages », la voix qui lit les phrases suit « voix ».
 // Pas de musique dans ce jeu : « musique » n'y règle rien. Ouvert seul, le kit garde le réglage sur cet appareil.
