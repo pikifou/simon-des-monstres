@@ -78,7 +78,23 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .iconbtn { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--panel-line); background: var(--panel);
   display: grid; place-items: center; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); flex: none; }
 .iconbtn svg { width: 26px; height: 26px; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.iconbtn[aria-pressed="false"] .on, .iconbtn[aria-pressed="true"] .off { display: none; }
+.iconbtn[data-son="off"] .on, .iconbtn[data-son="on"] .off { display: none; }
+/* Le petit panneau du son : deux réglages séparés (bruitages, voix), sous le haut-parleur touché. */
+#sonFond { position: fixed; inset: 0; z-index: 34; }
+.son-panel { position: fixed; z-index: 35; display: flex; gap: 8px; padding: 8px; border-radius: 24px 8px 24px 24px;
+  background: var(--night-2); border: 1px solid var(--panel-line); box-shadow: 0 16px 36px rgba(6, 3, 20, .6);
+  transform-origin: top right; animation: sonOuvre .18s cubic-bezier(.2, .9, .3, 1.3); }
+.son-panel.dessus { border-radius: 24px 24px 8px 24px; transform-origin: bottom right; }
+@keyframes sonOuvre { from { opacity: 0; transform: scale(.86); } }
+.son-bascule { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 112px; min-height: 96px;
+  padding: 12px 12px 10px; border: 2px solid var(--moon); border-radius: 18px; background: var(--moon); color: var(--moon-ink);
+  font-family: var(--font-display); font-weight: 800; font-size: 18px; line-height: 1; }
+.son-bascule svg { width: 38px; height: 38px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.son-bascule .barre { display: none; stroke-width: 2.8; }
+.son-bascule[aria-pressed="false"] { background: transparent; border-style: dashed; border-color: rgba(207, 198, 245, .45); color: var(--ink-soft); }
+.son-bascule[aria-pressed="false"] svg .trait { opacity: .5; }
+.son-bascule[aria-pressed="false"] .barre { display: inline; }
+.son-bascule:active { transform: scale(.95); }
 .iconbtn:active { transform: scale(.94); }
 .btn.install { min-height: 52px; padding: 8px 20px 8px 16px; font-size: 18px; background: var(--panel); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .btn.install svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
@@ -318,7 +334,7 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 .ludi #setup .wrap { padding-top: 56px; }
 @media (max-width: 640px) { .ludi .topbar { padding-left: 16px; padding-top: 50px; } }
 @media (prefers-reduced-motion: reduce) {
-  .fly, .title .simon span, .singer img, .mon .in, .card .hero img, .hub.input .lbl { animation: none !important; }
+  .fly, .title .simon span, .singer img, .mon .in, .card .hero img, .hub.input .lbl, .son-panel { animation: none !important; }
   .screen.enter, .card.enter, .overlay.enter { animation-duration: .01s; }
   #cine .cadre img, #cine h2, #cine .txt { transition: none; }
 }
@@ -344,7 +360,7 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
         <button class="iconbtn" id="btnFull" aria-label="Plein écran" data-i18n-aria="fullscreen" hidden>
           <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
         </button>
-        <button class="iconbtn" id="btnSoundHome" aria-label="Son" aria-pressed="true">
+        <button class="iconbtn" id="btnSoundHome" aria-label="Le son" data-son="on" aria-haspopup="true" aria-expanded="false" aria-controls="sonPanel">
           <svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M17 9l5 6M22 9l-5 6"/></svg>
         </button>
       </div>
@@ -432,7 +448,7 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
         <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></svg>
       </button>
       <div class="mid" id="chips"></div>
-      <button class="iconbtn" id="btnSoundGame" aria-label="Son" aria-pressed="true">
+      <button class="iconbtn" id="btnSoundGame" aria-label="Le son" data-son="on" aria-haspopup="true" aria-expanded="false" aria-controls="sonPanel">
         <svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M17 9l5 6M22 9l-5 6"/></svg>
       </button>
     </div>
@@ -467,6 +483,18 @@ canvas.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       </div>
     </div>
   </div>
+</div>
+
+<div id="sonFond" hidden></div>
+<div id="sonPanel" class="son-panel" role="group" aria-label="Le son" data-i18n-aria="soundMenu" hidden>
+  <button type="button" class="son-bascule" id="sonBruitages" aria-pressed="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><g class="trait"><path d="M9 17V5l11-2v12"/><circle cx="6.5" cy="17" r="2.5"/><circle cx="17.5" cy="15" r="2.5"/></g><path class="barre" d="M3 3l18 18"/></svg>
+    <span data-i18n="sfx">Bruitages</span>
+  </button>
+  <button type="button" class="son-bascule" id="sonVoix" aria-pressed="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><g class="trait"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16.5 5.5a4.5 4.5 0 0 1 0 6M19.5 3a8.5 8.5 0 0 1 0 11"/></g><path class="barre" d="M3 3l18 18"/></svg>
+    <span data-i18n="voice">Voix</span>
+  </button>
 </div>
 
 <div id="cine" hidden role="dialog" aria-modal="true">
@@ -603,12 +631,14 @@ Object.values(ICON).forEach(src => { const im = new Image(); im.src = src; prelo
 // ---------------------------------------------------------------- storage (per device, optional)
 const Store = {
   key: 'simon-des-monstres-v1',
-  data: { names: ['', ''], avatars: [1, 0], speed: 'normal', voice: true, sound: true, best: 0, tally: [0, 0], starter: 0, lang: '', concert: false },
+  data: { names: ['', ''], avatars: [1, 0], speed: 'normal', best: 0, tally: [0, 0], starter: 0, lang: '', concert: false },
   load() { try { const s = localStorage.getItem(this.key); if (s) Object.assign(this.data, JSON.parse(s)); } catch (e) {} },
   save() { try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch (e) {} },
 };
 Store.load();
 const D = Store.data;
+// Le son ne se garde plus ici mais dans Ludiworld (kit) : un ancien « son coupé » ou « voix non » de cette sauvegarde est oublié.
+delete D.sound; delete D.voice;
 // names left at a default label are stored empty so they follow the language
 D.names = D.names.map(n => /^(Joueur|Player) [12]$/.test(n || '') ? '' : (n || ''));
 if (D.lang !== 'fr' && D.lang !== 'en') D.lang = /^fr/i.test(navigator.language || 'fr') ? 'fr' : 'en';
@@ -619,6 +649,11 @@ if (D.lang !== 'fr' && D.lang !== 'en') D.lang = /^fr/i.test(navigator.language 
 const LUDI = window.Ludi ? window.Ludi.init({ game: 'simon-des-monstres' }) : null;
 const DANS_LUDI = !!(LUDI && LUDI.inLauncher());
 if (DANS_LUDI) document.documentElement.classList.add('ludi');
+// Le son (Julien, 2026-11-23) : réglé dans Ludiworld pour toute la maison, trois réglages séparés, tous allumés au départ.
+// Ici, les notes des monstres et les petits sons suivent « bruitages », la voix qui lit les phrases suit « voix ».
+// Pas de musique dans ce jeu : « musique » n'y règle rien. Ouvert seul, le kit garde le réglage sur cet appareil.
+let SON = LUDI ? LUDI.son() : { musique: true, bruitages: true, voix: true };
+function reglerSon(o) { if (LUDI) LUDI.reglerSon(o); else appliquerSon(Object.assign({}, SON, o)); }
 // La fin du jeu : en solo, retenir une chanson de CONCERT notes fait le concert de la chorale (une fois pour toutes, Ludi.fini()).
 // Le jeu continue ensuite comme avant, sans fin. Un record déjà à 8 ou plus (joué avant l'histoire) compte aussi : le jeu est
 // fini, et la scène du concert se joue la prochaine fois que la chanson atteint 8 notes (D.concert : scène déjà vue).
@@ -636,7 +671,7 @@ const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
 const I18N = {
   fr: {
     docTitle: 'Simon des Monstres', homeAria: 'Accueil', install: "Installer l'appli", fullscreen: 'Plein écran',
-    soundOff: 'Couper le son', soundOn: 'Remettre le son', subtitle: 'des Monstres',
+    soundMenu: 'Le son', sfx: 'Bruitages', subtitle: 'des Monstres',
     tagline: 'Les monstres chantent une petite chanson. Retiens-la et rejoue-la, une couleur de plus à chaque tour !',
     choirHint: "Touche un monstre pour l'entendre chanter", notes: ['Do', 'Ré', 'Mi', 'Sol', 'La'],
     singerAria: (n, note) => `${n}, la note ${note}`, hello: 'Coucou !',
@@ -670,7 +705,7 @@ const I18N = {
   },
   en: {
     docTitle: 'Simon and the Monsters', homeAria: 'Home', install: 'Install the app', fullscreen: 'Full screen',
-    soundOff: 'Mute', soundOn: 'Sound on', subtitle: 'and the Monsters',
+    soundMenu: 'Sound', sfx: 'Sounds', subtitle: 'and the Monsters',
     tagline: 'The monsters sing a little song. Remember it and play it back, with one more color every turn!',
     choirHint: 'Tap a monster to hear it sing', notes: ['C', 'D', 'E', 'G', 'A'],
     singerAria: (n, note) => `${n}, note ${note}`, hello: 'Hello!',
@@ -726,7 +761,12 @@ const Sound = {
     if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
     return this.ctx;
   },
-  ok() { return D.sound && this.ctx && this.ctx.state !== 'closed'; },
+  joues: [],  // pour les tests : les sons vraiment joués (note, wrong, fanfare, chime)
+  ok(nom) {
+    const oui = SON.bruitages && this.ctx && this.ctx.state !== 'closed';
+    if (oui && this.joues.length < 500) this.joues.push(nom);
+    return oui;
+  },
   voice(freq, t0, dur, { type = 'triangle', gain = 0.32, attack = 0.012, release = 0.22, glideTo = null, vibrato = true, filter = 3200 } = {}) {
     const c = this.ctx;
     const o = c.createOscillator(), o2 = c.createOscillator(), g = c.createGain(), g2 = c.createGain(), lp = c.createBiquadFilter();
@@ -747,18 +787,18 @@ const Sound = {
     o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(this.master);
     o.start(t0); o2.start(t0); o.stop(t0 + dur + release + 0.05); o2.stop(t0 + dur + release + 0.05);
   },
-  note(i, dur) { if (!this.ok()) return; this.voice(MONSTERS[i].freq, this.ctx.currentTime + 0.005, Math.max(0.12, dur)); },
+  note(i, dur) { if (!this.ok('note')) return; this.voice(MONSTERS[i].freq, this.ctx.currentTime + 0.005, Math.max(0.12, dur)); },
   wrong() {
-    if (!this.ok()) return; const t = this.ctx.currentTime + 0.01;
+    if (!this.ok('wrong')) return; const t = this.ctx.currentTime + 0.01;
     this.voice(330, t, 0.28, { type: 'sawtooth', gain: 0.18, glideTo: 250, filter: 900, vibrato: false });
     this.voice(262, t + 0.32, 0.5, { type: 'sawtooth', gain: 0.18, glideTo: 170, filter: 800, vibrato: true });
   },
   fanfare() {
-    if (!this.ok()) return; const t = this.ctx.currentTime + 0.02;
+    if (!this.ok('fanfare')) return; const t = this.ctx.currentTime + 0.02;
     [523.25, 659.25, 783.99, 1046.5].forEach((f, k) => this.voice(f, t + k * 0.11, k === 3 ? 0.42 : 0.1, { gain: 0.26 }));
   },
   chime() {
-    if (!this.ok()) return; const t = this.ctx.currentTime + 0.01;
+    if (!this.ok('chime')) return; const t = this.ctx.currentTime + 0.01;
     this.voice(1046.5, t, 0.06, { type: 'sine', gain: 0.14, vibrato: false, release: 0.3 });
     this.voice(1567.98, t + 0.07, 0.06, { type: 'sine', gain: 0.1, vibrato: false, release: 0.35 });
   },
@@ -775,7 +815,7 @@ const Voice = {
   },
   say(text) {
     return new Promise(res => {
-      if (!D.voice || !D.sound || !('speechSynthesis' in window)) return res();
+      if (!SON.voix || !('speechSynthesis' in window)) return res();
       let done = false; const fin = () => { if (!done) { done = true; res(); } };
       try {
         speechSynthesis.cancel();
@@ -817,6 +857,7 @@ window.addEventListener('popstate', () => {
   }
 });
 function show(name) {
+  fermerSon();
   if (name === 'home') disarmBack(); else armBack();
   ['home', 'setup', 'game'].forEach(s => { const el = $(s); const on = s === name; el.hidden = !on; if (on) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); } });
   app.dataset.screen = name;
@@ -835,21 +876,65 @@ for (let k = 0; k < 12; k++) {
 }
 
 // ---------------------------------------------------------------- toggles
+// Le haut-parleur se montre barré seulement quand les bruitages et la voix sont coupés tous les deux.
+const sonAllume = () => !!(SON.bruitages || SON.voix);
 function syncToggles() {
-  ['btnSoundHome', 'btnSoundGame'].forEach(id => { $(id).setAttribute('aria-pressed', String(D.sound)); $(id).setAttribute('aria-label', D.sound ? t('soundOff') : t('soundOn')); });
+  const on = sonAllume();
+  ['btnSoundHome', 'btnSoundGame'].forEach(id => { $(id).dataset.son = on ? 'on' : 'off'; $(id).setAttribute('aria-label', t('soundMenu')); });
+  $('sonBruitages').setAttribute('aria-pressed', String(!!SON.bruitages));
+  $('sonVoix').setAttribute('aria-pressed', String(!!SON.voix));
   $('spdSlow').setAttribute('aria-pressed', String(D.speed === 'slow'));
   $('spdNormal').setAttribute('aria-pressed', String(D.speed !== 'slow'));
-  $('voiceOn').setAttribute('aria-pressed', String(!!D.voice));
-  $('voiceOff').setAttribute('aria-pressed', String(!D.voice));
+  $('voiceOn').setAttribute('aria-pressed', String(!!SON.voix));
+  $('voiceOff').setAttribute('aria-pressed', String(!SON.voix));
   $('langFr').setAttribute('aria-pressed', String(D.lang === 'fr'));
   $('langEn').setAttribute('aria-pressed', String(D.lang === 'en'));
 }
-const toggleSound = () => { Sound.ensure(); D.sound = !D.sound; if (!D.sound) try { speechSynthesis.cancel(); } catch (e) {} Store.save(); syncToggles(); };
+// Le réglage du son arrive (au démarrage, de Ludiworld, ou d'un bouton du jeu) : le jeu l'applique.
+function appliquerSon(s) {
+  SON = s;
+  if (!SON.voix) try { speechSynthesis.cancel(); } catch (e) {}
+  if (Sound.master) Sound.master.gain.value = SON.bruitages ? 0.9 : 0;
+  syncToggles();
+}
+if (LUDI) LUDI.onSon(appliquerSon);
+// Le haut-parleur ouvre un petit panneau, comme dans les autres jeux (Julien : « il fait comme ailleurs ») :
+// « Bruitages » (les notes des monstres et les petits sons) et « Voix », chacun son réglage.
+// Dans Ludiworld, chacun change le réglage de toute la maison. Toucher ailleurs ferme le panneau.
+let sonDepuis = null;
+function placerSon(btn) {
+  // offsetWidth : la vraie taille, même pendant l'animation d'ouverture (qui la réduit un instant).
+  const panel = $('sonPanel'), r = btn.getBoundingClientRect(), p = { width: panel.offsetWidth, height: panel.offsetHeight }, m = 10;
+  const left = Math.max(m, Math.min(r.right - p.width, innerWidth - p.width - m));
+  let top = r.bottom + 8, dessus = false;
+  if (top + p.height > innerHeight - m) { top = Math.max(m, r.top - p.height - 8); dessus = true; }
+  panel.classList.toggle('dessus', dessus);
+  panel.style.left = left + 'px'; panel.style.top = top + 'px';
+}
+function ouvrirSon(btn) {
+  Sound.ensure(); sonDepuis = btn;
+  $('sonPanel').hidden = false; $('sonFond').hidden = false; placerSon(btn);
+  btn.setAttribute('aria-expanded', 'true');
+  $('sonBruitages').focus({ preventScroll: true });
+}
+function fermerSon() {
+  if ($('sonPanel').hidden) return;
+  $('sonPanel').hidden = true; $('sonFond').hidden = true;
+  if (sonDepuis) { sonDepuis.setAttribute('aria-expanded', 'false'); sonDepuis.focus({ preventScroll: true }); }
+  sonDepuis = null;
+}
+const toggleSound = (e) => { const b = e.currentTarget; if (sonDepuis === b) fermerSon(); else { fermerSon(); ouvrirSon(b); } };
 $('btnSoundHome').onclick = toggleSound; $('btnSoundGame').onclick = toggleSound;
+// Le fond invisible prend le toucher : il ferme le panneau sans toucher un monstre en dessous.
+$('sonFond').addEventListener('pointerdown', (e) => { e.preventDefault(); fermerSon(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') fermerSon(); });
+window.addEventListener('resize', fermerSon);
+$('sonBruitages').onclick = () => { Sound.ensure(); reglerSon({ bruitages: !SON.bruitages }); if (SON.bruitages) Sound.chime(); };
+$('sonVoix').onclick = () => { reglerSon({ voix: !SON.voix }); if (SON.voix) Voice.say(t('hello')); };
 $('spdSlow').onclick = () => { D.speed = 'slow'; Store.save(); syncToggles(); };
 $('spdNormal').onclick = () => { D.speed = 'normal'; Store.save(); syncToggles(); };
-$('voiceOn').onclick = () => { D.voice = true; Store.save(); syncToggles(); Sound.ensure(); Voice.say(t('hello')); };
-$('voiceOff').onclick = () => { D.voice = false; Store.save(); syncToggles(); };
+$('voiceOn').onclick = () => { reglerSon({ voix: true }); Sound.ensure(); Voice.say(t('hello')); };
+$('voiceOff').onclick = () => { reglerSon({ voix: false }); };
 function setLang(l) { if (D.lang === l) return; D.lang = l; Store.save(); applyLang(); Sound.ensure(); Voice.say(t('hello')); }
 $('langFr').onclick = () => setLang('fr');
 $('langEn').onclick = () => setLang('en');
@@ -1369,6 +1454,7 @@ show('home');
 window.__simon = {
   get game() { return game; }, get stage() { return turnStage; }, get runId() { return runId; }, store: D, CONCERT, cinematique,
   setTimeScale(s) { TIME_SCALE = s; }, padFromPoint,
+  get son() { return Object.assign({}, SON); }, sons() { return Sound.joues.splice(0); },
 };
 })();
 </script>

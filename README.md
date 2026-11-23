@@ -13,4 +13,6 @@ L'appli s'ouvre alors en plein écran et marche sans connexion.
 
 Compatible Ludiworld : la fiche du jeu est `ludi.json` et le kit `ludi.js` (copie de https://pikifou.github.io/ludiworld/kit/ludi.js) remonte au launcher les fins de partie, le record solo, les chansons retenues et le concert (« Fini ») ; ouvert seul, le jeu ne change pas.
 
+Le son suit le réglage de Ludiworld (kit 0.5) : tout est allumé au départ. Les notes des monstres et les petits sons suivent « bruitages », la voix qui lit les phrases suit « voix » ; pas de musique. Le haut-parleur du jeu ouvre un petit panneau à deux boutons, « Bruitages » et « Voix », chacun son réglage ; « Voix Oui / Non » de l'accueil règle la même voix. Dans Ludiworld, ces boutons changent le réglage de toute la maison. Test : `python tests/son.py` (serveur local sur le port 7370).
+
 Personnages et décors générés avec Higgsfield. Polices : Grandstander et Andika (SIL Open Font License).
